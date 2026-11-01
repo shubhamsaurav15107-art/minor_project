@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hardware IP Watermarking & Verification System (v5)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="header">
+    <h1>Hardware IP Watermarking & Dispute Verification</h1>
+    <p>Pedersen Commitment (C = G*h + r*H), Vendor Role-Based Authentication & Dispute Auditor</p>
+  </div>
+
+  <!-- Global Header Authentication Bar -->
+  <div class="auth-bar">
+    <div class="user-info">
+      <span>Vendor Session:</span>
+      <span id="session-badge" class="user-badge">Access Locked &bull; Please Login</span>
+      <span id="session-details" style="color:#64748b; font-size:12px;"></span>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-primary btn-sm" id="auth-action-btn" onclick="focusVendorLogin()">Login as Vendor</button>
+      <button class="btn btn-dark btn-sm" id="logout-btn" style="display:none;" onclick="logoutVendor()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('vendor')">Vendor Portal (Enrollment & Signing)</button>
+    <button class="tab-btn" onclick="switchTab('verifier')">Verifier / Auditor Portal (Verification)</button>
+    <button class="tab-btn" onclick="switchTab('explain')">How It Works (System Guide)</button>
+  </div>
+
+  <div class="container">
+
+    <!-- ==================== VENDOR PORTAL ==================== -->
+    <div id="vendor-tab" class="tab-content active">
+
+      <!-- 1. VENDOR LOGIN GATEWAY (Shown if NOT logged in) -->
+      <div id="vendor-login-gate" class="lockout-box">
+        <div style="font-size:36px; margin-bottom:10px;">🔒</div>
+        <h2>Vendor Portal Authentication Required</h2>
+        <p>You must authenticate with a registered vendor profile to design, sign, and commit hardware IP designs to the database.</p>
+        
+        <!-- Manual Login Form -->
+        <div style="text-align:left; background:#f8fafc; padding:18px; border-radius:6px; border:1px solid #e2e8f0; margin-bottom:16px;">
+          <div class="form-group">
+            <label>Vendor Username:</label>
+            <input type="text" id="login-username" placeholder="e.g., vendor_intel">
+          </div>
+          <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="login-password" placeholder="e.g., password123">
+          </div>
+          <button class="btn btn-primary" style="width:100%;" onclick="submitVendorLogin()">Login to Vendor Workspace</button>
+        </div>
+
+        <div style="font-size:12px; color:#64748b; margin-bottom:10px; font-weight:600;">
+          OR CHOOSE 1-CLICK DEMO VENDOR ACCOUNT (from users.json):
+        </div>
+        <div class="grid-3" id="quick-vendor-buttons">
+          <!-- Filled dynamically by script.js from users.json -->
+        </div>
+      </div>
+
+      <!-- 2. VENDOR AUTHENTICATED WORKSPACE (Visible ONLY after login) -->
+      <div id="vendor-workspace" style="display:none;">
+
+        <!-- Step 1: Predefined or Custom -->
+        <div class="card">
+          <h2>
+            <span>Step 1: Choose Predefined IP Core or Enter Custom Chip</span>
+            <span id="v-timestamp-preview" class="timestamp-tag" style="display:none;"></span>
+          </h2>
+          <div class="form-group">
+            <label>Load Predefined Demo IP Core (Pre-filled with keys & signatures):</label>
+            <select id="v-demo-select" onchange="loadVendorSelectedIP()">
+              <option value="">-- Choose Demo Core or Keep Blank for Custom Chip --</option>
+            </select>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>IP Core Identifier / Name:</label>
+              <input type="text" id="v-ip-id" placeholder="e.g., CUSTOM-DSP-9000">
+            </div>
+            <div class="form-group">
+              <label>IP Description / Function:</label>
+              <input type="text" id="v-ip-name" placeholder="e.g., Ultra-low power FFT Butterfly Unit">
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Watermark Bitstream (Binary):</label>
+              <input type="text" id="v-bitstream" placeholder="e.g., 101100101101">
+            </div>
+            <div class="form-group">
+              <label>Synthesized Netlist Hash (SHA-256):</label>
+              <input type="text" id="v-hash" placeholder="e.g., a8f5c2d398e01b7a2d1f43e59b6c8104">
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Key Generation -->
+        <div class="card">
+          <h2>Step 2: Generate Asymmetric Keypair (RSA-2048)</h2>
+          <p style="font-size:13px; color:#64748b; margin-bottom:12px;">
+            Generate private key (PrK) to sign watermarks and public key (PuK) to publish.
+          </p>
+          <button class="btn btn-dark" onclick="generateKeys()">Generate Keypair</button>
+          <div class="grid-2" style="margin-top:12px;">
+            <div class="form-group">
+              <label>Owner Private Key (PrK) - Kept Secret:</label>
+              <textarea id="v-prk" rows="3" readonly placeholder="Private key PEM will appear here..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Owner Public Key (PuK) - Public:</label>
+              <textarea id="v-puk" rows="3" readonly placeholder="Public key PEM will appear here..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Pedersen Commitment: C = G * h + r * H -->
+        <div class="card">
+          <h2>Step 3: Compute Pedersen Commitment (C = G * h + r * H)</h2>
+          <p style="font-size:13px; color:#64748b; margin-bottom:12px;">
+            Computes <code>C = (G * h + r * H) mod P</code> where <strong>h</strong> is the watermark scalar, <strong>r</strong> is the secret blinding factor, and <strong>G, H</strong> are public generator points.
+          </p>
+          <div class="grid-2">
+            <div class="form-group">
+              <label>Blinding Factor (r):</label>
+              <input type="number" id="v-r" value="482910">
+            </div>
+            <div class="form-group" style="display:flex; align-items:flex-end;">
+              <button class="btn btn-primary" onclick="createCommitment()">Compute Commitment C</button>
+            </div>
+          </div>
+          <div class="result-box" id="v-commitment-result">Commitment C: [Not Generated Yet]</div>
+        </div>
+
+        <!-- Step 4: Digital Signature & Save to Database -->
+        <div class="card">
+          <h2>Step 4: Digitally Sign & Save to Local Database with Timestamp</h2>
+          <button class="btn btn-primary" onclick="signWatermark()">Digitally Sign Watermark with PrK</button>
+          <div class="result-box" id="v-signature-result" style="margin-bottom:15px;">Signature (Hex): [None]</div>
+          
+          <button class="btn btn-success" onclick="publishIPToDatabase()">Save & Register in Local Database (database.json)</button>
+          <span id="v-publish-status" style="margin-left:12px; font-size:13px; font-weight:600;"></span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ==================== VERIFIER PORTAL ==================== -->
+    <div id="verifier-tab" class="tab-content">
+      
+      <!-- Selection of Registered Chip -->
+      <div class="card">
+        <h2>
+          <span>Select Registered Chip (From Local Database or Built-in Catalog)</span>
+          <span id="ver-timestamp-badge" class="timestamp-tag" style="display:none;"></span>
+        </h2>
+        <div class="form-group">
+          <label>Select Saved Design to Audit (Loads public records: PuK, Netlist Hash, Signature, Commitment C):</label>
+          <select id="ver-registered-select" onchange="loadVerifierRegisteredItem()">
+            <option value="">-- Choose from Local Database / Built-in --</option>
+          </select>
+        </div>
+        <div id="ver-audit-metadata" style="font-size:12px; color:#475569; display:none; background:#f8fafc; padding:8px 12px; border-radius:5px; border:1px solid #e2e8f0; margin-top:8px;">
+        </div>
+      </div>
+
+      <!-- Verification Input Form -->
+      <div class="card" id="verification-form-card">
+        <h2>Dispute Verification Inputs (Auditor Manual Testing)</h2>
+        
+        <div class="grid-2">
+          <div class="form-group">
+            <label>
+              Suspected Design Watermark Bitstream:
+              <span class="audit-hint">Manual Entry (Extracted from chip)</span>
+            </label>
+            <input type="text" id="ver-bitstream" placeholder="Enter extracted bitstream to audit (e.g., 101100101101)">
+          </div>
+          <div class="form-group">
+            <label>Owner Public Key (PuK):</label>
+            <textarea id="ver-puk" rows="3" placeholder="Vendor Public Key PEM"></textarea>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Vendor Digital Signature (Hex):</label>
+            <input type="text" id="ver-sig" placeholder="Signature hex">
+          </div>
+          <div class="form-group">
+            <label>Design Netlist Hash:</label>
+            <input type="text" id="ver-hash" placeholder="Netlist SHA-256 hash">
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Expected Pedersen Commitment C (G*h + r*H):</label>
+            <input type="text" id="ver-c" placeholder="0x...">
+          </div>
+          <div class="form-group">
+            <label>
+              Revealed Blinding Factor (r):
+              <span class="audit-hint">Manual Entry (Revealed by vendor)</span>
+            </label>
+            <input type="number" id="ver-r" placeholder="Enter vendor's revealed blinding factor r">
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:10px;">
+          <button class="btn btn-primary" onclick="runCompleteVerification()">Run Full Verification</button>
+          <button class="btn btn-outline" onclick="clearVerificationFields()">Clear All Fields</button>
+        </div>
+      </div>
+
+      <!-- Verdict Findings (GENUINE / PIRATED / MODIFIED) -->
+      <div class="card" id="verdict-card" style="display:none;">
+        <h2>Dispute Trial Findings & Cryptographic Verdict</h2>
+        
+        <div class="result-box" id="verdict-details"></div>
+
+        <!-- Easy Word Verdict Box -->
+        <div id="verdict-box" class="verdict-box">
+          <div id="verdict-word" class="verdict-title"></div>
+          <div id="verdict-explanation" class="verdict-desc"></div>
+        </div>
+        
+        <div style="margin-top:20px; text-align:center;">
+          <button class="btn btn-dark" style="font-size:14px; padding:10px 22px;" onclick="checkAnotherDesign()">
+            &larr; Check Another Design
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== HOW IT WORKS TAB ==================== -->
+    <div id="explain-tab" class="tab-content">
+      <div class="card">
+        <h2>How This System Protects Hardware IP from Piracy</h2>
+        
+        <div class="step-guide">
+          <h3>Stage 1: Watermark & Asymmetric Key Generation</h3>
+          <p>
+            The chip designer derives a unique watermark bitstream and creates an 
+            <strong>Asymmetric Keypair</strong> (Private Key PrK and Public Key PuK). The Private Key is 
+            kept secret by the designer, while the Public Key is stored in an open registry for future audits.
+          </p>
+        </div>
+
+        <div class="step-guide">
+          <h3>Stage 2: Watermark Embedding in Hardware Synthesis (HLS)</h3>
+          <p>
+            During circuit synthesis, a Conflict Interference Graph (CIG) is constructed. The watermark bits are embedded 
+            as artificial register conflict edges: bit 1 adds odd-odd variable constraints, while bit 0 
+            adds even-even variable constraints. This embeds the watermark permanently into register allocation without changing 
+            circuit functional behavior.
+          </p>
+        </div>
+
+        <div class="step-guide">
+          <h3>Stage 3: Pedersen Commitment (C = G * h + r * H) & Timestamping</h3>
+          <p>
+            Before public release, the vendor computes a <strong>Pedersen Commitment</strong>:
+            <br><code>C = (G * h + r * H) mod P</code>
+            <br>where <strong>h</strong> is the secret watermark integer and <strong>r</strong> is a random blinding factor. The vendor signs the design hash with their Private Key (PrK) and locks the registration timestamp.
+          </p>
+        </div>
+
+        <div class="step-guide">
+          <h3>Stage 4: Dispute Trial Verdicts (Genuine / Pirated / Modified)</h3>
+          <p>
+            When a suspect chip is audited, the server evaluates both proofs to render an easy verdict:
+            <br>&bull; <strong style="color:green;">GENUINE (Clean Design):</strong> Signature and commitment checks do not match vendor IP, indicating an independently designed core.
+            <br>&bull; <strong style="color:red;">PIRATED (Unauthorized Clone):</strong> The extracted watermark and signature match the genuine vendor's registered IP, confirming illegal duplication.
+            <br>&bull; <strong style="color:#d97706;">MODIFIED (Tampered Circuit):</strong> Watermark or netlist logic was altered after signing, causing signature mismatch.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

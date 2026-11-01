@@ -1,0 +1,25 @@
+{
+  "vendors": [
+    {
+      "username": "vendor_intel",
+      "password": "password123",
+      "vendor_name": "Intel DSP Labs",
+      "role": "Lead Hardware Architect",
+      "email": "architect@intel-dsp.example.com"
+    },
+    {
+      "username": "vendor_qualcomm",
+      "password": "password123",
+      "vendor_name": "Qualcomm Silicon Foundry",
+      "role": "ASIC Design Director",
+      "email": "ip-security@qualcomm-silicon.example.com"
+    },
+    {
+      "username": "vendor_arm",
+      "password": "password123",
+      "vendor_name": "ARM Security Division",
+      "role": "Cryptographic Hardware Engineer",
+      "email": "cores@arm-security.example.com"
+    }
+  ]
+}

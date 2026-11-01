@@ -1,0 +1,46 @@
+{
+  "demo_ip_cores": [
+    {
+      "id": "IP-CORE-101",
+      "name": "FIR Filter DSP Core (v2.1)",
+      "watermark_bitstream": "101100101101",
+      "design_hash": "a8f5c2d398e01b7a2d1f43e59b6c8104",
+      "description": "16-tap pipelined symmetric finite impulse response filter",
+      "test_vector": "1010110011110001",
+      "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAzq2e7V+lU+R2sVqZ/vN9\nQ2aO3pM7rT8uW1vX3y5z8A0B2C4D6E8F0A2B4C6D8E0F2A4B6C8D0E2F4A6B8C0D\n2E4F6A8B0C2D4E6F8A0B2C4D6E8F0A2B4C6D8E0F2A4B6C8D0E2F4A6B8C0D2E4F\n6A8B0C2D4E6F8A0B2C4D6E8F0A2B4C6D8E0F2A4B6C8D0E2F4A6B8C0D2E4F6A8B\n0C2D4E6F8A0B2C4D6E8F0A2B4C6D8E0F2A4B6C8D0E2F4A6B8C0D2E4F6A8B0C2D\n4E6F8A0B2C4D6E8F0A2B4C6D8E0F2A4B6C8D0E2F4A6B8C0D2E4F6A8B0C2D4E6F\n8QIDAQAB\n-----END PUBLIC KEY-----",
+      "signature_hex": "645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5645761ef0cb669e4c9879bb2dbb64c5fdd8de10211f307fd0d0366b6b96ceee5",
+      "commitment_C": "0x923444174b",
+      "blinding_factor_r": "482910",
+      "registered_at": "2026-10-15 10:30:00",
+      "registered_by": "Intel DSP Labs (vendor_intel)"
+    },
+    {
+      "id": "IP-CORE-202",
+      "name": "AES-128 Cryptographic Accelerator",
+      "watermark_bitstream": "110010100111",
+      "design_hash": "c3d4e5f60718293a4b5c6d7e8f901234",
+      "description": "SubBytes & MixColumns iterative pipelined engine",
+      "test_vector": "1111000010100101",
+      "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1k8m4P7wX0qL2n5vT9yB\n3c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d\n9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f\n1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b\n3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d\n5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f\n7wIDAQAB\n-----END PUBLIC KEY-----",
+      "signature_hex": "c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59c7ef45afd6494bc8bb44b5274ce2e46d91eba5ad8b7136a693829bea4bbd5a59",
+      "commitment_C": "0x9d39ddc3bd",
+      "blinding_factor_r": "519302",
+      "registered_at": "2026-10-18 14:15:22",
+      "registered_by": "Qualcomm Silicon Foundry (vendor_qualcomm)"
+    },
+    {
+      "id": "IP-CORE-303",
+      "name": "RISC-V RV32I ALU & Register File",
+      "watermark_bitstream": "100111010010",
+      "design_hash": "e1f2a3b4c5d60718293a4b5c6d7e8f90",
+      "description": "Low-power 32-bit arithmetic logic execution datapath",
+      "test_vector": "0101010111000011",
+      "public_key": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA7r8x9y0z1a2b3c4d5e6f\n8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b\n0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d\n2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f\n4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b\n6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d\n8wIDAQAB\n-----END PUBLIC KEY-----",
+      "signature_hex": "c4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516dfc4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516dfc4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516dfc4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516dfc4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516dfc4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516dfc4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516dfc4cb0099eed4dc7bdbfacb76227182473413de4f94db65c2c61fd61da03516df",
+      "commitment_C": "0xecb54bc148",
+      "blinding_factor_r": "782014",
+      "registered_at": "2026-10-22 09:45:10",
+      "registered_by": "ARM Security Division (vendor_arm)"
+    }
+  ]
+}
